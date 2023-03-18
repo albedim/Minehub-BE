@@ -12,6 +12,9 @@ from pip._vendor import requests
 from fightclubmc.service.MessageService import MessageService
 from fightclubmc.service.QuestionService import QuestionService
 from fightclubmc.service.UserService import UserService
+from fightclubmc.utils.Constants import Constants
+from fightclubmc.utils.Utils import Utils
+from resources.rest_service import config
 
 
 class ServerService():
@@ -36,3 +39,16 @@ class ServerService():
             if user['status'] == "online":
                 counter += 1
         return counter
+
+    @classmethod
+    def maintenance(cls):
+        resourceConfig = json.load(open('resources/config.json'))
+        return Utils.createSuccessResponse(True, True if resourceConfig['maintenance'] == "true" else False)
+
+    @classmethod
+    def setMaintenance(cls, status):
+        resourceConfig = json.load(open('resources/config.json'))
+        resourceConfig['maintenance'] = status
+        with open("resources/config.json", "w") as outfile:
+            json.dump(resourceConfig, outfile)
+        return Utils.createSuccessResponse(True, Constants.CREATED)

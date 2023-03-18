@@ -1,10 +1,10 @@
 config = {
   "name": "FightClubMC",
   "author": "albedim",
-  "version": "1.6.0",
+  "version": "1.6.5",
   "admin": {
-    "username": "a",
-    "password": "a"
+    "username": "senesenapoletano437",
+    "password": "jecouterron"
   },
   "history-versions": [
     "1.0.0 - first version",
@@ -19,6 +19,7 @@ config = {
     "1.4.5 - Admins can change user's role now",
     "1.5.0 - Bug Fixing, Messages and questions get incremented now",
     "1.5.5 - Messages can be removed now",
-    "1.6.0 - Bug Fixing"
+    "1.6.0 - Bug Fixing",
+    "1.6.5 - Maintenance was added"
   ]
 }
