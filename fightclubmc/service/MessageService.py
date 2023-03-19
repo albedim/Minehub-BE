@@ -45,8 +45,12 @@ class MessageService():
     @classmethod
     def add(cls, request):
         try:
-            MessageRepository.add(request['question_id'], request['owner_id'], request['body'])
-            UserService.addMessage(request['owner_id'])
+            user: dict = UserService.getUser(request['owner_id'])
+            if user['banned']:
+                return Utils.createWrongResponse(False, 306, Constants.NOT_ENOUGH_PERMISSIONS), 306
+            else:
+                MessageRepository.add(request['question_id'], request['owner_id'], request['body'])
+                UserService.addMessage(request['owner_id'])
             return Utils.createSuccessResponse(True, Constants.CREATED)
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400

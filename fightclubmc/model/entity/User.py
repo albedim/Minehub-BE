@@ -26,6 +26,7 @@ class User(sql.Model):
     messages: int = sql.Column(sql.Integer, nullable=False)
     admin: bool = sql.Column(sql.Boolean, nullable=False)
     role: str = sql.Column(sql.String(40), nullable=False)
+    banned: bool = sql.Column(sql.Boolean, nullable=False)
     created_on: datetime = sql.Column(sql.String(40), nullable=False)
 
     def __init__(self, name, email, minecraftUsername, password):
@@ -39,6 +40,7 @@ class User(sql.Model):
         self.email = email
         self.password_forgotten_token = None
         self.password = password
+        self.banned = False
         self.admin = False
 
     def toJson(self):
@@ -52,5 +54,6 @@ class User(sql.Model):
             'questions': self.questions,
             'admin': self.admin,
             'role': self.role,
+            'banned': self.banned,
             'created_on': str(self.created_on)
         }

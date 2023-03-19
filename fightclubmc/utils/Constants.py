@@ -12,6 +12,8 @@ class Constants():
     NOT_FOUND: str = "This resource was not found"
     NOT_ENOUGH_PERMISSIONS: str = "Not enough permissions"
     CREATED: str = "Created"
+    UP_TO_DATE: str = "Up To date"
+    NOT_UP_TO_DATE: str = "Not Up To date"
     FULL_SLOTS = "You can't add more"
     ALREADY_CREATED = "This resource was already created"
     INVALID_REQUEST: str = "Invalid request"

@@ -111,3 +111,9 @@ class UserRepository():
     def setAdmin(cls, user, admin):
         user.admin = admin
         sql.session.commit()
+
+    @classmethod
+    def setBanned(cls, userId, banned):
+        user: User = cls.getUserById(userId)
+        user.banned = banned
+        sql.session.commit()

@@ -19,7 +19,7 @@ def signin():
 @cross_origin()
 @jwt_required()
 def isExpired():
-    return get_jwt_identity()
+    return UserService.isUpToDate(get_jwt_identity())
 
 
 @user.route("/password_forgotten_token/<email>", methods=['PUT'])
@@ -75,6 +75,11 @@ def admin():
 def changeRole():
     return UserService.changeRole(request.json)
 
+
+@user.route("/ban", methods=['PUT'])
+@cross_origin()
+def ban():
+    return UserService.setBanned(request.json)
 
 
 

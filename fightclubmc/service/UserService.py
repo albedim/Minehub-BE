@@ -149,3 +149,16 @@ class UserService():
     def removeMessage(cls, userId):
         UserRepository.removeMessage(userId)
 
+    @classmethod
+    def setBanned(cls, request):
+        UserRepository.setBanned(request['user_id'], request['banned'])
+        return Utils.createSuccessResponse(True, Constants.CREATED)
+
+    @classmethod
+    def isUpToDate(cls, requestUser):
+        user: dict = cls.getUser(requestUser['user_id'])
+        if user == requestUser:
+            return Utils.createSuccessResponse(True, Constants.UP_TO_DATE)
+        else:
+            return Utils.createWrongResponse(False, Constants.NOT_UP_TO_DATE, 306), 306
+
