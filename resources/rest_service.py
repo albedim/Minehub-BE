@@ -1,7 +1,7 @@
 config = {
   "name": "FightClubMC",
   "author": "albedim",
-  "version": "1.7.5",
+  "version": "1.8.0",
   "admin": {
     "username": "senesenapoletano437",
     "password": "jecouterron"
@@ -22,6 +22,7 @@ config = {
     "1.6.0 - Bug Fixing",
     "1.6.5 - Endpoint for checking if users are up to date has been added",
     "1.7.0 - Maintenance was added",
-    "1.7.5 - Bans was added"
+    "1.7.5 - Bans was added",
+    "1.8.0 - Messages can be edited now"
   ]
 }

@@ -28,4 +28,9 @@ def add():
 def remove(messageId):
     return MessageService.removeMessage(get_jwt_identity(), messageId)
 
+@message.route("/change", methods=['PUT'])
+@cross_origin()
+def changeMessage():
+    return MessageService.changeMessage(request.json)
+
 

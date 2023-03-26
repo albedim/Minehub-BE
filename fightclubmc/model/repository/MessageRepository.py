@@ -50,6 +50,12 @@ class MessageRepository():
         sql.session.commit()
 
     @classmethod
+    def changeMessage(cls, messageId, body):
+        message: Message = cls.get(messageId)
+        message.body = body
+        sql.session.commit()
+
+    @classmethod
     def addLike(cls, messageId):
         like: Like = cls.get(messageId)
         like.likes += 1

@@ -33,6 +33,7 @@ class MessageService():
             result.append(message.toJson_Owner(
                 owner,
                 likeable=LikeService.get(userId, message.message_id) is None,
+                editable=userId == message.owner_id,
                 removable=userId == message.owner_id or UserService.getUser(userId)['admin'])
             )
         return jsonify(result)
@@ -54,6 +55,11 @@ class MessageService():
             return Utils.createSuccessResponse(True, Constants.CREATED)
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400
+
+    @classmethod
+    def changeMessage(cls, request):
+        MessageRepository.changeMessage(request['message_id'], request['body'])
+        return Utils.createSuccessResponse(True, Constants.CREATED)
         
     @classmethod
     def removeMessage(cls, owner, messageId):
