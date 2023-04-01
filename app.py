@@ -1,9 +1,8 @@
 from flask_jwt_extended import JWTManager
 
-from fightclubmc.configuration.config import app, sql
-from fightclubmc.controller import UserController, ServerController, CategoryController, QuestionController, \
-    MessageController, LikeController, NewsController
-from fightclubmc.service.QuestionService import QuestionService
+from minehub.configuration.config import app, sql
+from minehub.controller import UserController, ServerController, CategoryController, QuestionController, \
+    MessageController, LikeController, NewsController, RoleController
 
 # controllers init
 app.register_blueprint(MessageController.message)
@@ -12,6 +11,7 @@ app.register_blueprint(QuestionController.question)
 app.register_blueprint(ServerController.server)
 app.register_blueprint(LikeController.like)
 app.register_blueprint(UserController.user)
+app.register_blueprint(RoleController.role)
 app.register_blueprint(NewsController.news)
 
 # modules init

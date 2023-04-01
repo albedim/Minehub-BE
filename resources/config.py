@@ -1,6 +1,6 @@
 config = {
   "host": "localhost",
   "username": "root",
-  "db-name": "fightclubmc",
+  "db-name": "minehub",
   "password": ""
 }
