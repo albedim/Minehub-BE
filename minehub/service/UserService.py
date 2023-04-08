@@ -208,11 +208,15 @@ class UserService():
         return str(encodedImage)
 
     @classmethod
-    def isUpToDate(cls, requestUser):
+    def sync(cls, requestUser):
         user: User = UserRepository.getUserById(requestUser['user_id'])
-        user: dict = user.toJson_Role(RoleService.getRole(user.role_id))
-        if user == requestUser:
+        userJson: dict = user.toJson_Role(RoleService.getRole(user.role_id))
+        if userJson == requestUser:
             return Utils.createSuccessResponse(True, Constants.UP_TO_DATE)
         else:
-            return Utils.createWrongResponse(False, Constants.NOT_UP_TO_DATE, 306), 306
+            return Utils.createWrongResponse(False, {
+                "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)),
+                                             expires_delta=timedelta(weeks=4)),
+                "image": cls.encodeImage(user.image)
+            }, 306), 306
 

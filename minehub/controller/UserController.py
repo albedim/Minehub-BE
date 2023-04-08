@@ -14,11 +14,11 @@ def signin():
     return UserService.signin(request.json)
 
 
-@user.route("/session_check", methods=['GET'])
+@user.route("/sync", methods=['GET'])
 @cross_origin()
 @jwt_required()
 def isExpired():
-    return UserService.isUpToDate(get_jwt_identity())
+    return UserService.sync(get_jwt_identity())
 
 
 @user.route("/password_forgotten_token/<email>", methods=['PUT'])
