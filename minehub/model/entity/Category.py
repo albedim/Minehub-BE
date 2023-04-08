@@ -1,5 +1,6 @@
 from minehub.configuration.config import sql
 
+
 #
 # @author: Alberto Di Maio, albedim <dimaio.albe@gmail.com>
 # Created on: 05/03/23
@@ -7,7 +8,6 @@ from minehub.configuration.config import sql
 # Version: 1.0.0
 # Description: This is the class for the category entity
 #
-
 
 class Category(sql.Model):
     __tablename__ = 'categories'

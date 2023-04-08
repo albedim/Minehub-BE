@@ -1,6 +1,9 @@
+import base64
+import io
 from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from minehub.model.entity.User import User
+from PIL import Image
 from minehub.model.repository.RoleRepository import RoleRepository
 from minehub.model.repository.UserRepository import UserRepository
 from minehub.service.RoleService import RoleService
@@ -28,8 +31,11 @@ class UserService():
                 request['password']
             )
             if user is not None:
-                return Utils.createSuccessResponse(True, create_access_token(
-                    identity=user.toJson_Role(RoleService.getRole(user.role_id)), expires_delta=timedelta(weeks=4)))
+                # need to split user token and image because the image is too large to be inside the token
+                return Utils.createSuccessResponse(True, {
+                    "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)), expires_delta=timedelta(weeks=4)),
+                    "image": cls.encodeImage(user.image)
+                })
             else:
                 return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 404
         except KeyError:
@@ -44,7 +50,7 @@ class UserService():
     def getUser(cls, userId):
         try:
             user: User = UserRepository.getUserById(userId)
-            return user.toJson_Role(RoleService.getRole(user.role_id))
+            return user.toJson_Role_Image(RoleService.getRole(user.role_id), cls.encodeImage(user.image))
         except AttributeError:
             return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 404
 
@@ -54,12 +60,16 @@ class UserService():
             # for prevention, when user signs up, the member role gets added
             RoleService.add({'role_label': 'Member', 'color': 'gray'})
             if not cls.exists(request['email'], request['minecraft_username']):
+                image = Utils.createLink(40) + '.png'
                 UserRepository.signup(
                     request['name'],
                     request['email'],
                     request['minecraft_username'],
-                    request['password']
+                    request['password'],
+                    Constants.DEFAULT_IMAGE if request['image'] is None else image
                 )
+                if request['image'] is not None:
+                    cls.decodeImage(request['image'], image)
                 return Utils.createSuccessResponse(True, Constants.CREATED)
             else:
                 return Utils.createWrongResponse(False, Constants.ALREADY_CREATED, 409), 409
@@ -98,8 +108,7 @@ class UserService():
         users = UserRepository.getStaffers()
         result = []
         for user in users:
-            print(type(user))
-            result.append(user.toJson_Role(RoleService.getRole(user.role_id)))
+            result.append(cls.getUser(user.user_id))
         return result
 
     @classmethod
@@ -107,7 +116,7 @@ class UserService():
         users = UserRepository.getAllUsers()
         result = []
         for user in users:
-            result.append(user.toJson_Role(RoleService.getRole(user.role_id)))
+            result.append(cls.getUser(user.user_id))
         return result
 
     @classmethod
@@ -115,7 +124,7 @@ class UserService():
         users = UserRepository.getRecent()
         result = []
         for user in users:
-            result.append(user.toJson_Role(RoleService.getRole(user.role_id)))
+            result.append(cls.getUser(user.user_id))
         return result
 
     @classmethod
@@ -138,7 +147,10 @@ class UserService():
                 return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 44
             else:
                 UserRepository.change(user, request['name'], request['minecraft_username'], request['email'])
-                return Utils.createSuccessResponse(True, create_access_token(identity=cls.getUser(request['user_id']), expires_delta=timedelta(weeks=4)))
+                return Utils.createSuccessResponse(True, {
+                    "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)), expires_delta=timedelta(weeks=4)),
+                    "image": cls.encodeImage(user.image)
+                })
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400
 
@@ -184,8 +196,21 @@ class UserService():
         return Utils.createSuccessResponse(True, Constants.CREATED)
 
     @classmethod
+    def decodeImage(cls, image, imageName):
+        decodedImage = base64.b64decode(str(image))
+        file = Image.open(io.BytesIO(decodedImage))
+        file.save('minehub/files/profileImages/' + imageName, 'png')
+
+    @classmethod
+    def encodeImage(cls, imageName):
+        with open("minehub/files/profileImages/" + imageName, "rb") as image:
+            encodedImage = base64.b64encode(image.read())
+        return str(encodedImage)
+
+    @classmethod
     def isUpToDate(cls, requestUser):
-        user: dict = cls.getUser(requestUser['user_id'])
+        user: User = UserRepository.getUserById(requestUser['user_id'])
+        user: dict = user.toJson_Role(RoleService.getRole(user.role_id))
         if user == requestUser:
             return Utils.createSuccessResponse(True, Constants.UP_TO_DATE)
         else:

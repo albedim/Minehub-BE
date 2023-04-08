@@ -27,9 +27,10 @@ class User(sql.Model):
     admin: bool = sql.Column(sql.Boolean, nullable=False)
     role_id: int = sql.Column(sql.Integer, nullable=False)
     banned: bool = sql.Column(sql.Boolean, nullable=False)
+    image: str = sql.Column(sql.String(140), nullable=True)
     created_on: datetime = sql.Column(sql.String(40), nullable=False)
 
-    def __init__(self, name, email, minecraftUsername, password):
+    def __init__(self, name, email, minecraftUsername, password, image):
         self.name = name
         self.created_on = datetime.datetime.now()
         self.messages = 0
@@ -40,6 +41,7 @@ class User(sql.Model):
         self.email = email
         self.password_forgotten_token = None
         self.password = password
+        self.image = image
         self.banned = False
         self.admin = False
 
@@ -57,6 +59,23 @@ class User(sql.Model):
             'banned': self.banned,
             'created_on': str(self.created_on),
             'role': role
+        }
+
+    def toJson_Role_Image(self, role, image):
+        return {
+            'user_id': self.user_id,
+            'name': self.name,
+            'email': self.email,
+            'minecraft_username': self.minecraft_username,
+            'likes': self.likes,
+            'messages': self.messages,
+            'questions': self.questions,
+            'admin': self.admin,
+            'role_id': self.role_id,
+            'banned': self.banned,
+            'created_on': str(self.created_on),
+            'role': role,
+            'image': str(image)
         }
 
     def toJson(self):

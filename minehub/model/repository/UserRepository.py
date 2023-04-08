@@ -19,8 +19,8 @@ class UserRepository():
         return user
 
     @classmethod
-    def signup(cls, name, email, minecraftUsername, password) -> None:
-        user: User = User(name, email, minecraftUsername, password)
+    def signup(cls, name, email, minecraftUsername, password, image) -> None:
+        user: User = User(name, email, minecraftUsername, password, image)
         sql.session.add(user)
         sql.session.commit()
 

@@ -19,6 +19,7 @@ class Constants():
     INVALID_REQUEST: str = "Invalid request"
 
     FRONTEND_URL = ''
+    DEFAULT_IMAGE = 'default.png'
 
     EMAIL = 'fightclubmcserver@gmail.com'
     PASSWORD = 'xuqttkjvixdatmzj'
@@ -28,7 +29,4 @@ class Constants():
     PAGE_NOT_FOUND = 'This page was not found. See our documentation'
     PAGE_METHOD_NOT_ALLOWED = 'Method not allowed. See our documentation'
     PAGE_UNKNOWN_ERROR = 'Unknown error'
-
-    MEMBER = "Member"
-
     QUESTION_STATUS = {'JUST_CREATED': 'just_created', 'READING': 'reading', 'ACCEPTED': 'accepted', 'REJECTED': 'rejected'}
