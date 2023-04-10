@@ -2,7 +2,7 @@ from minehub.model.entity.Like import Like
 from minehub.model.repository.LikeRepository import LikeRepository
 from minehub.model.repository.MessageRepository import MessageRepository
 from minehub.utils.Constants import Constants
-from minehub.service.UserService import UserService
+from minehub.service.users.UserService import UserService
 from minehub.utils.Utils import Utils
 
 

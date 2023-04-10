@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
-from minehub.service.UserService import UserService
+from minehub.service.users.UserService import UserService
 from minehub.utils.Utils import Utils
 
 

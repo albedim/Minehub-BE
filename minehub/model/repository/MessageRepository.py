@@ -69,3 +69,8 @@ class MessageRepository():
     def removeMessage(cls, messageId):
         message: Message = sql.session.query(Message).filter(Message.message_id == messageId).delete()
         sql.session.commit()
+
+    @classmethod
+    def removeMessages(cls, questionId):
+        messages: list[Message] = sql.session.query(Message).filter(Message.question_id == questionId).delete()
+        sql.session.commit()

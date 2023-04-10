@@ -57,3 +57,13 @@ class QuestionRepository():
     def getLastQuestion(cls, ownerId):
         question: Question = sql.session.query(Question).filter(Question.owner_id == ownerId).order_by(desc(Question.question_id)).first()
         return question
+
+    @classmethod
+    def remove(cls, questionId):
+        question: Question = sql.session.query(Question).filter(Question.question_id == questionId).delete()
+        sql.session.commit()
+
+    @classmethod
+    def removeQuestions(cls, categoryId):
+        question: list[Question] = sql.session.query(Question).filter(Question.category_id == categoryId).delete()
+        sql.session.commit()

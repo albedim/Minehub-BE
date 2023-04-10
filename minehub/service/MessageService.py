@@ -4,7 +4,7 @@ from minehub.model.entity.Message import Message
 from minehub.model.repository.MessageRepository import MessageRepository
 from minehub.model.repository.LikeRepository import LikeRepository
 from minehub.service.LikeService import LikeService
-from minehub.service.UserService import UserService
+from minehub.service.users.UserService import UserService
 from minehub.utils.Constants import Constants
 from minehub.utils.Utils import Utils
 

@@ -2,8 +2,8 @@ import json
 
 from pip._vendor import requests
 from minehub.service.MessageService import MessageService
-from minehub.service.QuestionService import QuestionService
-from minehub.service.UserService import UserService
+from minehub.service.question.QuestionService import QuestionService
+from minehub.service.users.UserService import UserService
 from minehub.utils.Constants import Constants
 from minehub.utils.Utils import Utils
 

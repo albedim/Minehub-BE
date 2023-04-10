@@ -14,12 +14,22 @@ from minehub.model.entity.News import News
 class NewsRepository():
 
     @classmethod
-    def getNews(cls):
+    def getNewses(cls):
         news: list[News] = sql.session.query(News).order_by(desc(News.created_on)).all()
+        return news
+
+    @classmethod
+    def getNews(cls, newsId):
+        news: News = sql.session.query(News).filter(News.news_id == newsId).first()
         return news
 
     @classmethod
     def add(cls, title, body, ownerId):
         news: News = News(title, ownerId, body)
         sql.session.add(news)
+        sql.session.commit()
+
+    @classmethod
+    def remove(cls, newsId):
+        news: News = sql.session.query(News).filter(News.news_id == newsId).delete()
         sql.session.commit()

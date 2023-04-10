@@ -23,6 +23,11 @@ class CategoryRepository():
         return category
 
     @classmethod
+    def remove(cls, categoryId):
+        category: Category = sql.session.query(Category).filter(Category.category_id == categoryId).delete()
+        sql.session.commit()
+
+    @classmethod
     def add(cls, name, editable, private):
         category: Category = Category(name, editable, private)
         sql.session.add(category)

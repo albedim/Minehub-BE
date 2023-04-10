@@ -3,8 +3,8 @@ from minehub.model.entity.Question import Question
 from minehub.model.repository.MessageRepository import MessageRepository
 from minehub.model.repository.QuestionRepository import QuestionRepository
 from minehub.service.CategoryService import CategoryService
-from minehub.service.UserPermissionsService import UserPermissionsService
-from minehub.service.UserService import UserService
+from minehub.service.users.UserPermissionsService import UserPermissionsService
+from minehub.service.users.UserService import UserService
 from minehub.utils.Constants import Constants
 from minehub.utils.Utils import Utils
 
@@ -51,6 +51,10 @@ class QuestionService():
             return Utils.createWrongResponse(False, Constants.NOT_ENOUGH_PERMISSIONS, 403), 403
 
     @classmethod
+    def exists(cls, questionId):
+        return QuestionRepository.get(questionId) is not None
+
+    @classmethod
     def add(cls, request):
         try:
             QuestionRepository.add(request['name'], request['owner_id'], request['category_id'])
@@ -70,3 +74,16 @@ class QuestionService():
             return Utils.createSuccessResponse(True, Constants.CREATED)
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400
+
+    @classmethod
+    def remove(cls, userId, questionId):
+        if cls.exists(questionId):
+            if UserPermissionsService.isStaffer(userId) or QuestionRepository.get(questionId).owner_id == userId:
+                QuestionRepository.remove(questionId)
+                MessageRepository.removeMessages(questionId)
+                LikeService.removeLikes()
+                return Utils.createSuccessResponse(True, Constants.CREATED)
+            else:
+                return Utils.createWrongResponse(False, Constants.NOT_ENOUGH_PERMISSIONS, 403), 403
+        else:
+            return Utils.createWrongResponse(False, Constants.NOT_ENOUGH_PERMISSIONS, 403), 403

@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_cors import cross_origin
-from minehub.service.QuestionService import QuestionService
+from minehub.service.question.QuestionService import QuestionService
 from minehub.utils.Utils import Utils
 
 
@@ -33,6 +33,14 @@ def add():
 @cross_origin()
 def changeStatus():
     return QuestionService.changeStatus(request.json)
+
+
+@question.route("/remove/<questionId>", methods=['DELETE'])
+@jwt_required()
+@cross_origin()
+def remove(questionId: int):
+    return QuestionService.remove(get_jwt_identity()['user_id'], questionId)
+
 
 
 

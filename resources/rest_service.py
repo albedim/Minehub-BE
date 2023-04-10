@@ -1,7 +1,7 @@
 config = {
   "name": "Minehub",
   "author": "albedim",
-  "version": "1.9.5",
+  "version": "1.10.0",
   "admin": {
     "username": "admin",
     "password": "root"
@@ -26,6 +26,7 @@ config = {
     "1.8.0 - Messages can be edited now",
     "1.8.5 - Now users can edit their account",
     "1.9.0 - Roles are dynamic now",
-    "1.9.5 - Profile images were added"
+    "1.9.5 - Profile images were added",
+    "1.10.0 - Now newses, questions and categories can be removed"
   ]
 }
