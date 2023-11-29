@@ -4,7 +4,6 @@ from datetime import timedelta
 from flask_jwt_extended import create_access_token
 from minehub.model.entity.User import User
 from PIL import Image
-from minehub.model.repository.RoleRepository import RoleRepository
 from minehub.model.repository.UserRepository import UserRepository
 from minehub.service.RoleService import RoleService
 from minehub.utils.Constants import Constants
@@ -33,7 +32,8 @@ class UserService():
             if user is not None:
                 # need to split user token and image because the image is too large to be inside the token
                 return Utils.createSuccessResponse(True, {
-                    "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)), expires_delta=timedelta(weeks=4)),
+                    "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)),
+                                                 expires_delta=timedelta(weeks=4)),
                     "image": cls.encodeImage(user.image)
                 })
             else:
@@ -45,6 +45,14 @@ class UserService():
     def exists(cls, email, minecraftUsername) -> bool:
         return UserRepository.getUserByEmail(email) is not None \
                or UserRepository.getUserByMinecraftUsername(minecraftUsername) is not None
+
+    @classmethod
+    def existsByEmail(cls, email) -> bool:
+        return UserRepository.getUserByEmail(email) is not None
+
+    @classmethod
+    def existsByMinecraftUsername(cls, minecraftUsername) -> bool:
+        return UserRepository.getUserByMinecraftUsername(minecraftUsername) is not None
 
     @classmethod
     def getUser(cls, userId):
@@ -130,7 +138,8 @@ class UserService():
     @classmethod
     def admin(cls, request):
         try:
-            if request['username'] == config['admin']['username'] and request['password'] == config['admin']['password']:
+            if request['username'] == config['admin']['username'] and request['password'] == config['admin'][
+                'password']:
                 # for prevention, when user signs up, the member role gets added
                 RoleService.add({'role_label': 'Member', 'color': 'gray'})
                 return Utils.createSuccessResponse(True, True)
@@ -144,13 +153,35 @@ class UserService():
         try:
             user: User = UserRepository.getUserById(request['user_id'])
             if user is None:
-                return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 44
+                return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 404
             else:
-                UserRepository.change(user, request['name'], request['minecraft_username'], request['email'])
-                return Utils.createSuccessResponse(True, {
-                    "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)), expires_delta=timedelta(weeks=4)),
-                    "image": cls.encodeImage(user.image)
-                })
+                if request['email'] != user.email:
+                    if cls.existsByEmail(request['email']):
+                        return Utils.createWrongResponse(False, Constants.ALREADY_CREATED, 409), 409
+                    else:
+                        UserRepository.change(user, request['name'], request['minecraft_username'], request['email'])
+                        return Utils.createSuccessResponse(True, {
+                            "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)),
+                                                         expires_delta=timedelta(weeks=4)),
+                            "image": cls.encodeImage(user.image)
+                        })
+                elif request['minecraft_username'] != user.minecraft_username:
+                    if cls.existsByMinecraftUsername(request['minecraft_username']):
+                        return Utils.createWrongResponse(False, Constants.ALREADY_CREATED, 409), 409
+                    else:
+                        UserRepository.change(user, request['name'], request['minecraft_username'], request['email'])
+                        return Utils.createSuccessResponse(True, {
+                            "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)),
+                                                         expires_delta=timedelta(weeks=4)),
+                            "image": cls.encodeImage(user.image)
+                        })
+                else:
+                    UserRepository.change(user, request['name'], request['minecraft_username'], request['email'])
+                    return Utils.createSuccessResponse(True, {
+                        "token": create_access_token(identity=user.toJson_Role(RoleService.getRole(user.role_id)),
+                                                     expires_delta=timedelta(weeks=4)),
+                        "image": cls.encodeImage(user.image)
+                    })
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400
 
@@ -159,7 +190,7 @@ class UserService():
         try:
             user: User = UserRepository.getUserByEmail(request['email'])
             if user is None:
-                return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 44
+                return Utils.createWrongResponse(False, Constants.NOT_FOUND, 404), 404
             else:
                 UserRepository.changeRole(user, request['role_id'])
                 if request['role_id'] == 1:
@@ -169,19 +200,19 @@ class UserService():
                 return Utils.createSuccessResponse(True, Constants.CREATED)
         except KeyError:
             return Utils.createWrongResponse(False, Constants.INVALID_REQUEST, 400), 400
-        
+
     @classmethod
     def addLike(cls, userId):
         UserRepository.addLike(userId)
-        
+
     @classmethod
     def addQuestion(cls, userId):
         UserRepository.addQuestion(userId)
-        
+
     @classmethod
     def addMessage(cls, userId):
         UserRepository.addMessage(userId)
-    
+
     @classmethod
     def removeLike(cls, userId):
         UserRepository.removeLike(userId)
@@ -199,11 +230,11 @@ class UserService():
     def decodeImage(cls, image, imageName):
         decodedImage = base64.b64decode(str(image))
         file = Image.open(io.BytesIO(decodedImage))
-        file.save('minehub/files/profileImages/' + imageName, 'png')
+        file.save('fightclubmc/files/profileImages/' + imageName, 'png')
 
     @classmethod
     def encodeImage(cls, imageName):
-        with open("minehub/files/profileImages/" + imageName, "rb") as image:
+        with open("fightclubmc/files/profileImages/" + imageName, "rb") as image:
             encodedImage = base64.b64encode(image.read())
         return str(encodedImage)
 

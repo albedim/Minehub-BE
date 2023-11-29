@@ -81,7 +81,6 @@ class QuestionService():
             if UserPermissionsService.isStaffer(userId) or QuestionRepository.get(questionId).owner_id == userId:
                 QuestionRepository.remove(questionId)
                 MessageRepository.removeMessages(questionId)
-                LikeService.removeLikes()
                 return Utils.createSuccessResponse(True, Constants.CREATED)
             else:
                 return Utils.createWrongResponse(False, Constants.NOT_ENOUGH_PERMISSIONS, 403), 403
